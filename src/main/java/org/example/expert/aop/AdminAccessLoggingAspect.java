@@ -29,4 +29,6 @@ public class AdminAccessLoggingAspect {
     }
 
     //fork 테스트
+    //repository 테스트
+
 }
