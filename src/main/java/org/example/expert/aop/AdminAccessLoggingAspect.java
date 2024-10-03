@@ -28,7 +28,4 @@ public class AdminAccessLoggingAspect {
                 userId, requestTime, requestUrl, joinPoint.getSignature().getName());
     }
 
-    //fork 테스트
-    //repository 테스트
-
 }
