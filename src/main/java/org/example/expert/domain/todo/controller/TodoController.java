@@ -48,8 +48,15 @@ public class TodoController {
         return ResponseEntity.ok(todoService.getTodo(todoId));
     }
 
-    @GetMapping("/todos/search")
-    public ResponseEntity<Page<TodoSearchResponse>> searchTodos(){
-        return ResponseEntity.ok(todoService.serchTodos())
-    }
+//    @GetMapping("/todos/search")
+//    public ResponseEntity<Page<TodoSearchResponse>> searchTodos(
+//            @RequestParam(defaultValue = "1") int page,
+//            @RequestParam(defaultValue = "10") int size,
+//            @RequestParam(required = false) String title,
+//            @RequestParam(required = false)@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+//            @RequestParam(required = false)@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+//            @RequestParam(required = false) String nickName
+//    ){
+//        return ResponseEntity.ok(todoService.searchTodos(page,size,title,startDate,endDate,nickName));
+//    }
 }

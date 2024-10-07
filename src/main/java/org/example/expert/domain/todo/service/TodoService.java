@@ -7,6 +7,7 @@ import org.example.expert.domain.common.exception.InvalidRequestException;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequest;
 import org.example.expert.domain.todo.dto.response.TodoResponse;
 import org.example.expert.domain.todo.dto.response.TodoSaveResponse;
+import org.example.expert.domain.todo.dto.response.TodoSearchResponse;
 import org.example.expert.domain.todo.entity.Todo;
 import org.example.expert.domain.todo.repository.TodoRepository;
 import org.example.expert.domain.user.dto.response.UserResponse;
@@ -98,4 +99,18 @@ public class TodoService {
                 todo.getModifiedAt()
         );
     }
+
+//    public Page<TodoSearchResponse> searchTodos(int page,
+//                                                int size,
+//                                                String title,
+//                                                LocalDate startDate,
+//                                                LocalDate endDate,
+//                                                String nickName) {
+//        Pageable pageable = PageRequest.of(page - 1, size);
+//
+//        LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
+//        LocalDateTime endDateTime = endDate != null ? endDate.atTime(23, 59, 59) : null;
+//
+//        if()
+//    }
 }
