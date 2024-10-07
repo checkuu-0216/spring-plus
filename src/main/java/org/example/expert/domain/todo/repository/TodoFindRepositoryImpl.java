@@ -3,7 +3,6 @@ package org.example.expert.domain.todo.repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.example.expert.domain.common.exception.EntityNotFoundException;
 import org.example.expert.domain.todo.entity.Todo;
 import org.springframework.stereotype.Repository;
 
