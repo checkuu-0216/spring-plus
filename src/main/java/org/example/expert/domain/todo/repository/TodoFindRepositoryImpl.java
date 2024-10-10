@@ -1,18 +1,20 @@
 package org.example.expert.domain.todo.repository;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.example.expert.domain.comment.dto.response.CommentResponse;
-import org.example.expert.domain.manager.dto.response.ManagerResponse;
-import org.example.expert.domain.todo.dto.response.TodoResponse;
+import org.example.expert.domain.todo.dto.response.TodoProjectionDto;
 import org.example.expert.domain.todo.entity.Todo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.example.expert.domain.comment.entity.QComment.comment;
@@ -36,34 +38,55 @@ public class TodoFindRepositoryImpl implements TodoFindRepository{
     }
 
     @Override
-    public Page<TodoResponse> search(Pageable pageable, Long managerId) {
-        List<Todo> results = queryFactory
-                .select(todo)
-                .distinct()
+    public Page<TodoProjectionDto> findByIdFromProjection(Pageable pageable,
+                                                          String title,
+                                                          LocalDate startDate,
+                                                          LocalDate endDate,
+                                                          String nickName) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+        LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
+        LocalDateTime endDateTime = endDate != null ? endDate.atTime(23, 59, 59) : null;
+
+        if (title != null && !title.isEmpty()) {
+            builder.and(todo.title.containsIgnoreCase(title));
+        }
+
+        // 생성일 범위 검색 조건
+        if (startDateTime != null && endDateTime != null) {
+            builder.and(todo.modifiedAt.between(startDateTime, endDateTime));
+        } else if (startDateTime != null) {
+            builder.and(todo.modifiedAt.goe(startDateTime));
+        } else if (endDateTime != null) {
+            builder.and(todo.modifiedAt.loe(endDateTime));
+        }
+
+        // 담당자 닉네임 검색 조건
+        if (nickName != null && !nickName.isEmpty()) {
+            builder.and(manager.user.nickname.containsIgnoreCase(nickName));
+        }
+
+        List<TodoProjectionDto> results = queryFactory
+                .select(Projections.constructor(
+                                TodoProjectionDto.class,
+                                todo.title,
+                                manager.countDistinct().intValue(),
+                                comment.countDistinct().intValue()))
                 .from(todo)
-                .leftJoin(todo.managers, manager).fetchJoin()
+                .leftJoin(todo.managers, manager)
                 .leftJoin(todo.comments, comment)
+                .where(builder)
+                .groupBy(todo.id, todo.title)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
         Long totalCount = queryFactory
-                .select(Wildcard.count)
+                .select(Wildcard.count) //select count(*)
                 .from(todo)
                 .fetchOne();
 
-        List<TodoResponse> content = results.stream()
-                .map(todo ->
-                        new TodoResponse(
-                                todo.getId(),
-                                todo.getTitle(),
-                                todo.getContents(),
-                                todo.getComments().stream().map(comment -> new CommentResponse(comment.getId(), comment.getContents())).toList(),
-                                todo.getManagers().stream().map(manager -> new ManagerResponse(manager.getId(), manager.getUser())).toList()
-                        )
-                ).toList();
-
-        return new PageImpl<>(content, pageable, totalCount);
+        return new PageImpl<>(results,pageable,totalCount);
     }
 
     private BooleanExpression todoIdEq(Long todoId) {

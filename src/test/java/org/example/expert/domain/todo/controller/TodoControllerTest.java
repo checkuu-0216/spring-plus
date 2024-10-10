@@ -67,7 +67,7 @@ class TodoControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "testUser",roles = "Role_ADMIN")
+    @WithMockUser(username = "testUser",roles = "ADMIN")
     void todo_단건_조회_시_todo가_존재하지_않아_예외가_발생한다() throws Exception {
         // given
         long todoId = 1L;
