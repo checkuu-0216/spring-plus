@@ -34,6 +34,7 @@ public class TodoFindRepositoryImpl implements TodoFindRepository{
                 .where(todoIdEq(todoId))
                 .fetchOne();
     }
+
     @Override
     public Page<TodoResponse> search(Pageable pageable, Long managerId) {
         List<Todo> results = queryFactory
