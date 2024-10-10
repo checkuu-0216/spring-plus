@@ -112,18 +112,4 @@ public class TodoService {
 
         return todoRepository.findByIdFromProjection(pageable,title, startDate, endDate, nickName);
     }
-
-//    public Page<TodoSearchResponse> searchTodos(int page,
-//                                                int size,
-//                                                String title,
-//                                                LocalDate startDate,
-//                                                LocalDate endDate,
-//                                                String nickName) {
-//        Pageable pageable = PageRequest.of(page - 1, size);
-//
-//        LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
-//        LocalDateTime endDateTime = endDate != null ? endDate.atTime(23, 59, 59) : null;
-//
-//        if()
-//    }
 }
